@@ -54,7 +54,7 @@ void ExecutionHandler::update_floating_risk(const Order &order) {
         trigger_price = order.get_trigger_price().value();
     }
 
-    if (order.get_role() == OrderRole::ENTRY) {
+    if (order.get_status() == OrderStatus::PENDING) {
         floating_risk_ += std::abs((trigger_price - order.get_stop_loss_price().value())) *
                           contract_size * volume;
     } else {
