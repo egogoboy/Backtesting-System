@@ -41,6 +41,27 @@ double ExecutionHandler::get_floating_risk() const {
 
 void ExecutionHandler::execute_order(Order &order) {}
 
+bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &market_data) {
+    Direction direction = order.get_direction();
+
+    switch (order.get_type()) {
+    case OrderType::MARKET:
+        return true;
+    case OrderType::LIMIT:
+        if (direction == Direction::LONG) {
+            return order.get_trigger_price().value() >= market_data.get_low();
+        }
+
+        return order.get_trigger_price().value() <= market_data.get_high();
+    case OrderType::STOP:
+        if (direction == Direction::LONG) {
+            return order.get_trigger_price().value() <= market_data.get_high();
+        }
+
+        return order.get_trigger_price().value() >= market_data.get_low();
+    }
+}
+
 void ExecutionHandler::fill_position(Order &order) {}
 
 void ExecutionHandler::update_floating_risk(const Order &order) {

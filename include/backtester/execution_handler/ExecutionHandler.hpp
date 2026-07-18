@@ -23,6 +23,8 @@ class ExecutionHandler {
   private:
     void execute_order(Order &order);
 
+    static bool can_execute_order(const Order &order, const MarketData &market_data);
+
     void fill_position(Order &order);
 
     void update_floating_risk(const Order &order);
