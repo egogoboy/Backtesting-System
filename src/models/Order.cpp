@@ -111,6 +111,14 @@ const std::weak_ptr<Position> &Order::get_position() const {
     return position_;
 }
 
+std::optional<double> Order::get_stop_loss_price() const {
+    return stop_loss_price_;
+}
+
+std::optional<double> Order::get_take_profit_price() const {
+    return take_profit_price_;
+}
+
 Order::Order(const Instrument &instrument, Direction direction, OrderRole role, double volume,
              OrderType type, std::optional<double> trigger_price,
              std::optional<double> stop_loss_price, std::optional<double> take_profit_price,

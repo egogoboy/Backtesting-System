@@ -52,6 +52,10 @@ class Order {
 
     const std::weak_ptr<Position> &get_position() const;
 
+    std::optional<double> get_stop_loss_price() const;
+
+    std::optional<double> get_take_profit_price() const;
+
   private:
     Order(const Instrument &instrument, Direction direction, OrderRole role, double volume,
           OrderType type, std::optional<double> trigger_price,
