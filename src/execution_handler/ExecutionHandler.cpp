@@ -1,5 +1,6 @@
 #include "backtester/execution_handler/ExecutionHandler.hpp"
 #include "backtester/enums/Direction.hpp"
+#include "backtester/enums/OrderRole.hpp"
 #include "backtester/enums/OrderType.hpp"
 
 ExecutionHandler::ExecutionHandler(EventQueue &event_queue, Portfolio &portfolio,
@@ -30,13 +31,34 @@ void ExecutionHandler::on_order_event(const std::shared_ptr<OrderEvent> &event) 
         }
     }
 
+    update_floating_risk(order);
     orders_.emplace_back(std::move(order));
 }
 
-double ExecutionHandler::get_floating_risk() const {}
+double ExecutionHandler::get_floating_risk() const {
+    return floating_risk_;
+}
 
 void ExecutionHandler::execute_order(Order &order) {}
 
 void ExecutionHandler::fill_position(Order &order) {}
 
-void ExecutionHandler::update_floating_risk(const Order &order) {}
+void ExecutionHandler::update_floating_risk(const Order &order) {
+    double contract_size = order.get_instrument().get_contract_size();
+    double volume = order.get_volume();
+
+    double trigger_price = 0.0;
+    if (order.get_type() == OrderType::MARKET) {
+        trigger_price = last_market_data_.get().get_close();
+    } else {
+        trigger_price = order.get_trigger_price().value();
+    }
+
+    if (order.get_role() == OrderRole::ENTRY) {
+        floating_risk_ += std::abs((trigger_price - order.get_stop_loss_price().value())) *
+                          contract_size * volume;
+    } else {
+        floating_risk_ -= std::abs(order.get_position().lock()->get_entry_price() - trigger_price) *
+                          contract_size * volume;
+    }
+}
