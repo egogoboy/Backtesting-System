@@ -34,6 +34,8 @@ class Order {
 
     OrderStatus get_status() const;
 
+    OrderRole get_role() const;
+
     bool is_exit_order() const;
 
     bool is_entry_order() const;

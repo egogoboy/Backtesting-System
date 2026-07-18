@@ -75,6 +75,10 @@ OrderStatus Order::get_status() const {
     return status_;
 }
 
+OrderRole Order::get_role() const {
+    return role_;
+}
+
 bool Order::is_exit_order() const {
     return role_ == OrderRole::EXIT;
 }
