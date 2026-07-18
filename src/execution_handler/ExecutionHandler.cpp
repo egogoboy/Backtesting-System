@@ -60,6 +60,8 @@ bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &m
 
         return order.get_trigger_price().value() >= market_data.get_low();
     }
+
+    return false;
 }
 
 void ExecutionHandler::fill_position(Order &order) {}
