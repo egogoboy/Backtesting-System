@@ -29,7 +29,14 @@ class ExecutionHandler {
 
     void update_floating_risk(const Order &order);
 
+    void update_atr(const MarketData &market_data);
+
+    double calculate_true_range(const MarketData &market_data);
+
     double floating_risk_ = 0;
+    double atr_ = 0;
+    uint32_t number_of_periods_ = 0;
+    const double ATR_PERIOD = 14;
     std::vector<Order> orders_;
     std::vector<Position> positions_;
 

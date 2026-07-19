@@ -85,3 +85,21 @@ void ExecutionHandler::update_floating_risk(const Order &order) {
                           contract_size * volume;
     }
 }
+
+void ExecutionHandler::update_atr(const MarketData &market_data) {
+    if (number_of_periods_ < ATR_PERIOD) {
+        ++number_of_periods_;
+        atr_ += calculate_true_range(market_data) / ATR_PERIOD;
+    } else {
+        atr_ += (calculate_true_range(market_data) - atr_) / ATR_PERIOD;
+    }
+}
+
+double ExecutionHandler::calculate_true_range(const MarketData &market_data) {
+    double current_high = market_data.get_high();
+    double current_low = market_data.get_low();
+    double previous_close = last_market_data_.get().get_close();
+
+    return std::max(std::max(current_high - current_low, std::abs(current_high - previous_close)),
+                    std::abs(current_low - previous_close));
+}
