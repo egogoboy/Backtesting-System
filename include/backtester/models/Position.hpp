@@ -51,8 +51,26 @@ class Position {
         return exit_price_;
     }
 
+    bool set_stop_loss_order(const std::shared_ptr<Order> &order) {
+        if (!stop_loss_order_.lock()) {
+            return false;
+        }
+
+        stop_loss_order_ = order;
+        return true;
+    }
+
     std::weak_ptr<Order> get_stop_loss_order() const {
         return stop_loss_order_;
+    }
+
+    bool set_take_profit_order(const std::shared_ptr<Order> &order) {
+        if (!take_profit_order_.lock()) {
+            return false;
+        }
+
+        take_profit_order_ = order;
+        return true;
     }
 
     std::weak_ptr<Order> get_take_profit_order() const {
