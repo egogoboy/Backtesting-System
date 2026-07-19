@@ -40,7 +40,7 @@ class ExecutionHandler {
 
     double atr_ = 0;
     uint32_t number_of_periods_ = 0;
-    const double ATR_PERIOD = 14;
+    static constexpr double ATR_PERIOD = 14;
 
     std::mt19937_64 rng_;
     static constexpr size_t SPREAD_SEED = 42;
