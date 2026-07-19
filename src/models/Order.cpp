@@ -67,6 +67,15 @@ bool Order::cancel() {
     return true;
 }
 
+bool Order::convert_to_market() {
+    if (type_ != OrderType::STOP) {
+        return false;
+    }
+
+    type_ = OrderType::MARKET;
+    return true;
+}
+
 uint32_t Order::get_id() const {
     return id_;
 }

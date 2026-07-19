@@ -30,6 +30,8 @@ class Order {
 
     bool cancel();
 
+    bool convert_to_market();
+
     uint32_t get_id() const;
 
     OrderStatus get_status() const;
