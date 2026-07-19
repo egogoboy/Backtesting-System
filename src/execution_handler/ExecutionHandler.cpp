@@ -86,6 +86,10 @@ void ExecutionHandler::update_floating_risk(const Order &order) {
     }
 }
 
+double ExecutionHandler::calculate_spread() {
+    return atr_ * spread_dist_(rng_);
+}
+
 void ExecutionHandler::update_atr(const MarketData &market_data) {
     if (number_of_periods_ < ATR_PERIOD) {
         ++number_of_periods_;
