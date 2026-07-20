@@ -31,9 +31,9 @@ TEST(RiskManager, ProduceCorrectOrders) {
     EXPECT_TRUE(!queue.empty());
 
     event = std::dynamic_pointer_cast<OrderEvent>(queue.front());
-    EXPECT_EQ(event->get_data().get_direction(), Direction::LONG);
-    EXPECT_EQ(event->get_data().get_type(), OrderType::MARKET);
-    EXPECT_LE(event->get_data().get_volume() - 2, 1e-7);
+    EXPECT_EQ(event->get_data()->get_direction(), Direction::LONG);
+    EXPECT_EQ(event->get_data()->get_type(), OrderType::MARKET);
+    EXPECT_LE(event->get_data()->get_volume() - 2, 1e-7);
 
     queue.pop();
 
@@ -43,9 +43,9 @@ TEST(RiskManager, ProduceCorrectOrders) {
     EXPECT_TRUE(!queue.empty());
 
     event = std::dynamic_pointer_cast<OrderEvent>(queue.front());
-    EXPECT_EQ(event->get_data().get_direction(), Direction::LONG);
-    EXPECT_EQ(event->get_data().get_type(), OrderType::LIMIT);
-    EXPECT_LE(event->get_data().get_volume() - 2, 1e-7);
+    EXPECT_EQ(event->get_data()->get_direction(), Direction::LONG);
+    EXPECT_EQ(event->get_data()->get_type(), OrderType::LIMIT);
+    EXPECT_LE(event->get_data()->get_volume() - 2, 1e-7);
 
     queue.pop();
 
@@ -53,9 +53,9 @@ TEST(RiskManager, ProduceCorrectOrders) {
         Signal::make_limit(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1.171, 1.170, 1.175)));
 
     event = std::dynamic_pointer_cast<OrderEvent>(queue.front());
-    EXPECT_EQ(event->get_data().get_direction(), Direction::LONG);
-    EXPECT_EQ(event->get_data().get_type(), OrderType::LIMIT);
-    EXPECT_LE(event->get_data().get_volume() - 1, 1e-7);
+    EXPECT_EQ(event->get_data()->get_direction(), Direction::LONG);
+    EXPECT_EQ(event->get_data()->get_type(), OrderType::LIMIT);
+    EXPECT_LE(event->get_data()->get_volume() - 1, 1e-7);
 
     EXPECT_TRUE(!queue.empty());
 }

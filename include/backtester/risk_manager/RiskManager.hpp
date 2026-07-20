@@ -21,9 +21,9 @@ class RiskManager {
     void on_market_event(const std::shared_ptr<MarketEvent> &event);
 
   private:
-    void place_order(Order order) const;
+    void place_order(const std::shared_ptr<Order> &order) const;
 
-    static Order create_order(const Signal &signal, double position_size);
+    static std::shared_ptr<Order> create_order(const Signal &signal, double position_size);
 
     bool check_stop_loss_take_profit(const Signal &signal) const;
 

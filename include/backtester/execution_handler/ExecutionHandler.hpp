@@ -49,8 +49,8 @@ class ExecutionHandler {
     static constexpr double MAXIMUM_SPREAD = 1e-4 * 5;
     std::uniform_real_distribution<double> spread_dist_{MINIMAL_SPREAD, MAXIMUM_SPREAD};
 
-    std::vector<Order> orders_;
-    std::vector<Position> positions_;
+    std::vector<std::shared_ptr<Order>> orders_;
+    std::vector<std::shared_ptr<Position>> positions_;
 
     std::reference_wrapper<EventQueue> event_queue_;
     std::reference_wrapper<Portfolio> portfolio_;

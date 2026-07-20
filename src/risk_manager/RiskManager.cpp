@@ -33,23 +33,26 @@ void RiskManager::on_market_event(const std::shared_ptr<MarketEvent> &event) {
     last_market_data_ = event->get_data();
 }
 
-void RiskManager::place_order(Order order) const {
-    event_queue_.get().push(std::make_shared<OrderEvent>(std::move(order)));
+void RiskManager::place_order(const std::shared_ptr<Order> &order) const {
+    event_queue_.get().push(std::make_shared<OrderEvent>(order));
 }
 
-Order RiskManager::create_order(const Signal &signal, double position_size) {
+std::shared_ptr<Order> RiskManager::create_order(const Signal &signal, double position_size) {
     switch (signal.get_type()) {
     case OrderType::MARKET:
-        return Order::make_market(signal.get_instrument(), signal.get_direction(), position_size,
-                                  signal.get_stop_loss_price(), signal.get_take_profit_price());
+        return std::make_shared<Order>(
+            Order::make_market(signal.get_instrument(), signal.get_direction(), position_size,
+                               signal.get_stop_loss_price(), signal.get_take_profit_price()));
     case OrderType::LIMIT:
-        return Order::make_limit(signal.get_instrument(), signal.get_direction(), position_size,
-                                 signal.get_entry_price().value(), signal.get_stop_loss_price(),
-                                 signal.get_take_profit_price());
+        return std::make_shared<Order>(
+            Order::make_limit(signal.get_instrument(), signal.get_direction(), position_size,
+                              signal.get_entry_price().value(), signal.get_stop_loss_price(),
+                              signal.get_take_profit_price()));
     case OrderType::STOP:
-        return Order::make_stop(signal.get_instrument(), signal.get_direction(), position_size,
-                                signal.get_entry_price().value(), signal.get_stop_loss_price(),
-                                signal.get_take_profit_price());
+        return std::make_shared<Order>(
+            Order::make_stop(signal.get_instrument(), signal.get_direction(), position_size,
+                             signal.get_entry_price().value(), signal.get_stop_loss_price(),
+                             signal.get_take_profit_price()));
     }
 }
 

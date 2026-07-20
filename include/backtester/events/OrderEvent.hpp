@@ -3,23 +3,20 @@
 #include "backtester/enums/EventType.hpp"
 #include "backtester/events/Event.hpp"
 #include "backtester/models/Order.hpp"
+#include <memory>
 
 class OrderEvent : public Event {
   public:
-    OrderEvent(Order order) : data_{std::move(order)} {}
+    OrderEvent(const std::shared_ptr<Order> &order) : data_{order} {}
 
     EventType get_type() const override {
         return EventType::ORDER;
     }
 
-    Order &get_data() {
+    const std::shared_ptr<Order> &get_data() const {
         return data_;
     }
 
-    Order &&take_data() {
-        return std::move(data_);
-    }
-
   private:
-    Order data_;
+    std::shared_ptr<Order> data_;
 };
