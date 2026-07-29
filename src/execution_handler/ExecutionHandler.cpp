@@ -1,29 +1,49 @@
 #include "backtester/execution_handler/ExecutionHandler.hpp"
 #include "backtester/enums/Direction.hpp"
-#include "backtester/enums/OrderRole.hpp"
+#include "backtester/enums/FillAction.hpp"
+#include "backtester/enums/OrderStatus.hpp"
 #include "backtester/enums/OrderType.hpp"
+#include "backtester/events/FillEvent.hpp"
+#include <algorithm>
+#include <memory>
 
 ExecutionHandler::ExecutionHandler(EventQueue &event_queue, Portfolio &portfolio,
                                    const MarketData &initial_market_data)
-    : event_queue_{event_queue}, portfolio_{portfolio}, last_market_data_{initial_market_data} {}
+    : event_queue_{event_queue}, portfolio_{portfolio}, last_market_data_{initial_market_data} {
+    rng_ = std::mt19937_64(SPREAD_SEED);
+}
 
-void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event) {}
+void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event) {
+    const MarketData &market_data = event->get_data();
+    update_atr(market_data);
+
+    for (auto it = orders_.begin(); it != orders_.end();) {
+        if ((*it)->get_status() == OrderStatus::CANCELED) {
+            it = orders_.erase(it);
+        } else if (can_execute_order(**it, market_data)) {
+            execute_order(**it);
+            it = orders_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
 
 void ExecutionHandler::on_order_event(const std::shared_ptr<OrderEvent> &event) {
-    Order order = std::move(event->get_data());
+    auto order = event->get_data();
 
     double current_price = last_market_data_.get().get_close();
-    Direction direction = order.get_direction();
+    Direction direction = order->get_direction();
 
-    if (order.get_type() == OrderType::LIMIT) {
-        double limit_price = order.get_trigger_price().value();
+    if (order->get_type() == OrderType::LIMIT) {
+        double limit_price = order->get_trigger_price().value();
 
         if ((direction == Direction::LONG && limit_price > current_price) ||
             (direction == Direction::SHORT && limit_price < current_price)) {
             return;
         }
-    } else if (order.get_type() == OrderType::STOP) {
-        double stop_price = order.get_trigger_price().value();
+    } else if (order->get_type() == OrderType::STOP) {
+        double stop_price = order->get_trigger_price().value();
 
         if ((direction == Direction::LONG && stop_price <= current_price) ||
             (direction == Direction::SHORT && stop_price >= current_price)) {
@@ -31,8 +51,8 @@ void ExecutionHandler::on_order_event(const std::shared_ptr<OrderEvent> &event) 
         }
     }
 
-    update_floating_risk(order);
-    orders_.emplace_back(std::move(order));
+    update_floating_risk(*order);
+    orders_.emplace_back(order);
 }
 
 double ExecutionHandler::get_floating_risk() const {
