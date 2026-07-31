@@ -149,12 +149,18 @@ void ExecutionHandler::update_floating_risk(const Order &order) {
         trigger_price = order.get_trigger_price().value();
     }
 
-    if (order.get_status() == OrderStatus::PENDING) {
-        floating_risk_ += std::abs((trigger_price - order.get_stop_loss_price().value())) *
-                          contract_size * volume;
-    } else {
-        floating_risk_ -= std::abs(order.get_position().lock()->get_entry_price() - trigger_price) *
-                          contract_size * volume;
+    if (order.get_role() == OrderRole::ENTRY) {
+        if (order.get_status() == OrderStatus::PENDING) {
+            floating_risk_ += std::abs((trigger_price - order.get_stop_loss_price().value())) *
+                              contract_size * volume;
+        } else if (order.get_status() == OrderStatus::CANCELED) {
+            floating_risk_ -= std::abs((trigger_price - order.get_stop_loss_price().value())) *
+                              contract_size * volume;
+        } else {
+            floating_risk_ -=
+                std::abs(order.get_position().lock()->get_entry_price() - trigger_price) *
+                contract_size * volume;
+        }
     }
 }
 
