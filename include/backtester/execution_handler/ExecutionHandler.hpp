@@ -27,7 +27,7 @@ class ExecutionHandler {
 
     bool can_execute_order(const Order &order, const MarketData &market_data);
 
-    void fill_position(Order &order);
+    void fill_position(Order &order, double target_price);
 
     void update_floating_risk(const Order &order);
 

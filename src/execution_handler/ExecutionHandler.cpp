@@ -94,7 +94,49 @@ bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &m
     return false;
 }
 
-void ExecutionHandler::fill_position(Order &order) {}
+void ExecutionHandler::fill_position(Order &order, double target_price) {
+    double margin =
+        order.get_volume() * order.get_instrument().get_contract_size() * config_.margin_rate;
+
+    if (order.get_role() == OrderRole::ENTRY) {
+        auto position = std::make_shared<Position>(order.get_instrument(), order.get_volume(),
+                                                   order.get_direction(), target_price);
+
+        if (order.get_direction() == Direction::LONG) {
+            orders_.emplace_back(
+                std::make_shared<Order>(Order::make_take_profit(position, target_price)));
+            orders_.emplace_back(
+                std::make_shared<Order>(Order::make_stop_loss(position, target_price)));
+        } else {
+            orders_.emplace_back(
+                std::make_shared<Order>(Order::make_stop_loss(position, target_price)));
+            orders_.emplace_back(
+                std::make_shared<Order>(Order::make_take_profit(position, target_price)));
+        }
+
+        portfolio_.get().reserve_margin(margin);
+
+        positions_.emplace_back(position);
+
+        event_queue_.get().push(std::make_shared<FillEvent>(position, FillAction::OPEN));
+    } else {
+        std::shared_ptr<Position> position = order.get_position().lock();
+
+        position->get_take_profit_order().lock()->cancel();
+        position->get_stop_loss_order().lock()->cancel();
+
+        position->close_position(target_price);
+
+        positions_.erase(std::find_if(positions_.begin(), positions_.end(),
+                                      [position](const std::shared_ptr<Position> &iterator) {
+                                          return position.get() == iterator.get();
+                                      }));
+
+        portfolio_.get().release_margin(margin);
+
+        event_queue_.get().push(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+}
 
 void ExecutionHandler::update_floating_risk(const Order &order) {
     double contract_size = order.get_instrument().get_contract_size();
