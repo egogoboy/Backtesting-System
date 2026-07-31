@@ -68,6 +68,12 @@ void ExecutionHandler::execute_order(Order &order) {}
 bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &market_data) {
     Direction direction = order.get_direction();
 
+    if (!portfolio_.get().has_available_funds(order.get_volume() *
+                                              order.get_instrument().get_contract_size() *
+                                              config_.margin_rate)) {
+        return false;
+    }
+
     switch (order.get_type()) {
     case OrderType::MARKET:
         return true;
