@@ -16,6 +16,7 @@ ExecutionHandler::ExecutionHandler(const ExecutionConfig &config, EventQueue &ev
 
 void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event) {
     const MarketData &market_data = event->get_data();
+
     update_atr(market_data);
 
     for (auto it = orders_.begin(); it != orders_.end();) {
