@@ -15,18 +15,24 @@ TEST(ExecutionHandler, ValidOrdersCreationAndFloatingRiskCalculation) {
 
     ExecutionHandler execution_handler(event_queue, portfolio, initial_market_data);
 
-    execution_handler.on_order_event(std::make_shared<OrderEvent>(
+    auto event = std::make_shared<OrderEvent>(std::make_shared<Order>(
         Order::make_market(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.169, 1.180)));
+
+    execution_handler.on_order_event(event);
 
     EXPECT_LE(execution_handler.get_floating_risk() - 100, 1e-7);
 
-    execution_handler.on_order_event(std::make_shared<OrderEvent>(
+    event = std::make_shared<OrderEvent>(std::make_shared<Order>(
         Order::make_limit(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.169, 1.168, 1.180)));
+
+    execution_handler.on_order_event(event);
 
     EXPECT_LE(execution_handler.get_floating_risk() - 200, 1e-7);
 
-    execution_handler.on_order_event(std::make_shared<OrderEvent>(
+    event = std::make_shared<OrderEvent>(std::make_shared<Order>(
         Order::make_stop(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.171, 1.169, 1.180)));
+
+    execution_handler.on_order_event(event);
 
     EXPECT_LE(execution_handler.get_floating_risk() - 400, 1e-7);
 }
@@ -39,13 +45,13 @@ TEST(ExecutionHandler, InvalidOrdersCreation) {
 
     ExecutionHandler execution_handler(event_queue, portfolio, initial_market_data);
 
-    execution_handler.on_order_event(std::make_shared<OrderEvent>(
-        Order::make_limit(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.171, 1.168, 1.180)));
+    execution_handler.on_order_event(std::make_shared<OrderEvent>(std::make_shared<Order>(
+        Order::make_limit(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.171, 1.168, 1.180))));
 
     EXPECT_LE(execution_handler.get_floating_risk(), 1e-7);
 
-    execution_handler.on_order_event(std::make_shared<OrderEvent>(
-        Order::make_stop(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.169, 1.169, 1.180)));
+    execution_handler.on_order_event(std::make_shared<OrderEvent>(std::make_shared<Order>(
+        Order::make_stop(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.169, 1.169, 1.180))));
 
     EXPECT_LE(execution_handler.get_floating_risk(), 1e-7);
 }
