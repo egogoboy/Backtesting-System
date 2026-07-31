@@ -19,13 +19,15 @@ void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event
     update_atr(market_data);
 
     for (auto it = orders_.begin(); it != orders_.end();) {
-        if ((*it)->get_status() == OrderStatus::CANCELED) {
-            it = orders_.erase(it);
-        } else if (can_execute_order(**it, market_data)) {
-            execute_order(**it);
-            it = orders_.erase(it);
+        if ((*it)->get_status() == OrderStatus::PENDING) {
+            if (can_execute_order(**it, market_data)) {
+                execute_order(**it);
+                it = orders_.erase(it);
+            } else {
+                ++it;
+            }
         } else {
-            ++it;
+            it = orders_.erase(it);
         }
     }
 }
