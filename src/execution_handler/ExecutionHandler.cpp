@@ -7,9 +7,10 @@
 #include <algorithm>
 #include <memory>
 
-ExecutionHandler::ExecutionHandler(EventQueue &event_queue, Portfolio &portfolio,
-                                   const MarketData &initial_market_data)
-    : event_queue_{event_queue}, portfolio_{portfolio}, last_market_data_{initial_market_data} {
+ExecutionHandler::ExecutionHandler(const ExecutionConfig &config, EventQueue &event_queue,
+                                   Portfolio &portfolio, const MarketData &initial_market_data)
+    : config_{config}, event_queue_{event_queue}, portfolio_{portfolio},
+      last_market_data_{initial_market_data} {
     rng_ = std::mt19937_64(SPREAD_SEED);
 }
 

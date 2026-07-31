@@ -1,5 +1,6 @@
 #pragma once
 
+#include "backtester/config/ExecutionConfig.hpp"
 #include "backtester/core/EventQueue.hpp"
 #include "backtester/events/MarketEvent.hpp"
 #include "backtester/events/OrderEvent.hpp"
@@ -12,7 +13,7 @@
 
 class ExecutionHandler {
   public:
-    ExecutionHandler(EventQueue &event_queue, Portfolio &portfolio,
+    ExecutionHandler(const ExecutionConfig &config, EventQueue &event_queue, Portfolio &portfolio,
                      const MarketData &initial_market_data);
 
     void on_market_event(const std::shared_ptr<MarketEvent> &event);
@@ -35,6 +36,8 @@ class ExecutionHandler {
     void update_atr(const MarketData &market_data);
 
     double calculate_true_range(const MarketData &market_data);
+
+    ExecutionConfig config_;
 
     double floating_risk_ = 0;
 
