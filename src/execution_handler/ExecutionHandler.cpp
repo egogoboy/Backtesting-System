@@ -63,7 +63,30 @@ double ExecutionHandler::get_floating_risk() const {
     return floating_risk_;
 }
 
-void ExecutionHandler::execute_order(Order &order) {}
+void ExecutionHandler::execute_order(Order &order) {
+    double slippage = calculate_spread();
+
+    if (order.get_type() == OrderType::STOP) {
+        order.convert_to_market();
+    }
+
+    if (order.get_direction() == Direction::SHORT) {
+        slippage *= -1;
+    }
+
+    double entry_price = 0;
+    if (order.get_type() == OrderType::MARKET) {
+        entry_price = last_market_data_.get().get_close() + slippage;
+    } else {
+        entry_price = order.get_trigger_price().value();
+    }
+
+    fill_position(order, entry_price);
+
+    order.execute();
+
+    update_floating_risk(order);
+}
 
 bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &market_data) {
     Direction direction = order.get_direction();
