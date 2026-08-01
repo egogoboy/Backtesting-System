@@ -126,15 +126,15 @@ void ExecutionHandler::fill_position(Order &order, double target_price) {
                                                    order.get_direction(), target_price);
 
         if (order.get_direction() == Direction::LONG) {
-            orders_.emplace_back(
-                std::make_shared<Order>(Order::make_take_profit(position, target_price)));
-            orders_.emplace_back(
-                std::make_shared<Order>(Order::make_stop_loss(position, target_price)));
+            orders_.emplace_back(std::make_shared<Order>(
+                Order::make_take_profit(position, order.get_take_profit_price().value())));
+            orders_.emplace_back(std::make_shared<Order>(
+                Order::make_stop_loss(position, order.get_stop_loss_price().value())));
         } else {
-            orders_.emplace_back(
-                std::make_shared<Order>(Order::make_stop_loss(position, target_price)));
-            orders_.emplace_back(
-                std::make_shared<Order>(Order::make_take_profit(position, target_price)));
+            orders_.emplace_back(std::make_shared<Order>(
+                Order::make_stop_loss(position, order.get_stop_loss_price().value())));
+            orders_.emplace_back(std::make_shared<Order>(
+                Order::make_take_profit(position, order.get_take_profit_price().value())));
         }
 
         portfolio_.get().reserve_margin(margin);
