@@ -30,6 +30,8 @@ class Order {
 
     bool cancel();
 
+    bool assign_position(const std::shared_ptr<Position> &position);
+
     bool convert_to_market();
 
     uint32_t get_id() const;

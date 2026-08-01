@@ -49,6 +49,15 @@ Order Order::make_take_profit(const std::shared_ptr<Position> &position, double 
                  std::nullopt, position);
 }
 
+bool Order::assign_position(const std::shared_ptr<Position> &position) {
+    if (role_ != OrderRole::ENTRY || !position_.expired()) {
+        return false;
+    }
+
+    position_ = position;
+    return true;
+}
+
 bool Order::execute() {
     if (status_ != OrderStatus::PENDING) {
         return false;
