@@ -135,17 +135,21 @@ void ExecutionHandler::fill_position(Order &order, double target_price) {
         auto position = std::make_shared<Position>(order.get_instrument(), order.get_volume(),
                                                    order.get_direction(), target_price);
 
+        auto sl_order = std::make_shared<Order>(
+            Order::make_stop_loss(position, order.get_stop_loss_price().value()));
+        auto tp_order = std::make_shared<Order>(
+            Order::make_take_profit(position, order.get_take_profit_price().value()));
+
         if (order.get_direction() == Direction::LONG) {
-            orders_.emplace_back(std::make_shared<Order>(
-                Order::make_take_profit(position, order.get_take_profit_price().value())));
-            orders_.emplace_back(std::make_shared<Order>(
-                Order::make_stop_loss(position, order.get_stop_loss_price().value())));
+            orders_.emplace_back(tp_order);
+            orders_.emplace_back(sl_order);
         } else {
-            orders_.emplace_back(std::make_shared<Order>(
-                Order::make_stop_loss(position, order.get_stop_loss_price().value())));
-            orders_.emplace_back(std::make_shared<Order>(
-                Order::make_take_profit(position, order.get_take_profit_price().value())));
+            orders_.emplace_back(sl_order);
+            orders_.emplace_back(tp_order);
         }
+
+        position->set_stop_loss_order(sl_order);
+        position->set_take_profit_order(tp_order);
 
         portfolio_.get().reserve_margin(margin);
 
