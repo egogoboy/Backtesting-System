@@ -87,4 +87,10 @@ TEST(ExecutionHandler, ExecuteOrder) {
     EXPECT_FALSE(portfolio.has_available_funds(10000));
 
     EXPECT_TRUE(portfolio.has_available_funds(9000));
+
+    next_market_data = MarketData(GLOBAL_EURUSD_INSTRUMENT, {1.172, 1.182, 1.170, 1.179}, 2);
+
+    execution_handler.on_market_event(std::make_shared<MarketEvent>(next_market_data));
+
+    EXPECT_TRUE(portfolio.has_available_funds(10000));
 }
