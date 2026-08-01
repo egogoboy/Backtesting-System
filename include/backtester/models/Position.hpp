@@ -52,7 +52,7 @@ class Position {
     }
 
     bool set_stop_loss_order(const std::shared_ptr<Order> &order) {
-        if (!stop_loss_order_.lock()) {
+        if (stop_loss_order_.lock()) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class Position {
     }
 
     bool set_take_profit_order(const std::shared_ptr<Order> &order) {
-        if (!take_profit_order_.lock()) {
+        if (take_profit_order_.lock()) {
             return false;
         }
 
