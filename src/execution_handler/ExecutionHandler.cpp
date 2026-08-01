@@ -6,6 +6,7 @@
 #include "backtester/events/FillEvent.hpp"
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 ExecutionHandler::ExecutionHandler(const ExecutionConfig &config, EventQueue &event_queue,
                                    Portfolio &portfolio, const MarketData &initial_market_data)
@@ -19,17 +20,26 @@ void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event
 
     update_atr(market_data);
 
-    for (auto it = orders_.begin(); it != orders_.end();) {
-        if ((*it)->get_status() == OrderStatus::PENDING) {
-            if (can_execute_order(**it, market_data)) {
-                execute_order(**it);
-                it = orders_.erase(it);
-            } else {
-                ++it;
-            }
-        } else {
-            it = orders_.erase(it);
+    std::vector<std::shared_ptr<Order>> orders_to_execute;
+
+    std::erase_if(orders_, [&](const auto &order_ptr) {
+        if (!order_ptr) {
+            return true;
         }
+
+        if (order_ptr->get_status() == OrderStatus::PENDING) {
+            if (can_execute_order(*order_ptr, market_data)) {
+                orders_to_execute.emplace_back(order_ptr);
+                return true;
+            }
+            return false;
+        }
+
+        return true;
+    });
+
+    for (auto &order_ptr : orders_to_execute) {
+        execute_order(*order_ptr);
     }
 }
 
