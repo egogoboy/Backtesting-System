@@ -141,6 +141,8 @@ void ExecutionHandler::fill_position(Order &order, double target_price) {
 
         positions_.emplace_back(position);
 
+        order.assign_position(position);
+
         event_queue_.get().push(std::make_shared<FillEvent>(position, FillAction::OPEN));
     } else {
         std::shared_ptr<Position> position = order.get_position().lock();
