@@ -19,17 +19,17 @@ TEST(Portfolio, CalculateFloatingLosses) {
 
     Portfolio portfolio(CONFIG);
 
-    portfolio.on_event(std::make_shared<FillEvent>(position_long_1, FillAction::OPEN));
-    portfolio.on_event(std::make_shared<FillEvent>(position_long_2, FillAction::OPEN));
-    portfolio.on_event(std::make_shared<FillEvent>(position_short, FillAction::OPEN));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_long_1, FillAction::OPEN));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_long_2, FillAction::OPEN));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_short, FillAction::OPEN));
     EXPECT_LE(std::abs(portfolio.get_floating_losses(1.170) - 700), 10e-7);
 
     position_short->close_position(1.170);
-    portfolio.on_event(std::make_shared<FillEvent>(position_short, FillAction::CLOSE));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_short, FillAction::CLOSE));
     EXPECT_LE(std::abs(portfolio.get_floating_losses(1.170) - 700), 10e-7);
 
     position_long_2->close_position(1.170);
-    portfolio.on_event(std::make_shared<FillEvent>(position_long_2, FillAction::CLOSE));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_long_2, FillAction::CLOSE));
     EXPECT_LE(std::abs(portfolio.get_floating_losses(1.170) - 500), 10e-7);
 }
 
@@ -38,23 +38,23 @@ TEST(Portfolio, CalculateBalanceAndRealizedPnL) {
 
     std::shared_ptr<Position> position_long =
         std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 1, Direction::LONG, 1.175);
-    portfolio.on_event(std::make_shared<FillEvent>(position_long, FillAction::OPEN));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_long, FillAction::OPEN));
 
     EXPECT_LE(std::abs(portfolio.get_account_balance() - 10000), 10e-7);
     EXPECT_LE(std::abs(portfolio.get_floating_losses(1.170) - 500), 10e-7);
 
     position_long->close_position(1.170);
-    portfolio.on_event(std::make_shared<FillEvent>(position_long, FillAction::CLOSE));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_long, FillAction::CLOSE));
 
     EXPECT_LE(std::abs(portfolio.get_realized_pnl() + 500), 10e-7);
     EXPECT_LE(std::abs(portfolio.get_account_balance() - 9500), 10e-7);
 
     std::shared_ptr<Position> position_short =
         std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 1, Direction::SHORT, 1.175);
-    portfolio.on_event(std::make_shared<FillEvent>(position_short, FillAction::OPEN));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_short, FillAction::OPEN));
 
     position_short->close_position(1.170);
-    portfolio.on_event(std::make_shared<FillEvent>(position_short, FillAction::CLOSE));
+    portfolio.on_fill_event(std::make_shared<FillEvent>(position_short, FillAction::CLOSE));
 
     EXPECT_LE(std::abs(portfolio.get_realized_pnl()), 10e-7);
     EXPECT_LE(std::abs(portfolio.get_account_balance() - 10000), 10e-7);

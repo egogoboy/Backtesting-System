@@ -4,7 +4,7 @@
 
 #include <memory>
 
-void Portfolio::on_event(const std::shared_ptr<FillEvent> &event) {
+void Portfolio::on_fill_event(const std::shared_ptr<FillEvent> &event) {
     std::shared_ptr<const Position> position = event->get_data();
 
     if (event->get_action() == FillAction::OPEN) {
@@ -24,6 +24,15 @@ void Portfolio::on_event(const std::shared_ptr<FillEvent> &event) {
 
         account_balance_ += pnl;
         realized_pnl_ += pnl;
+    }
+}
+
+void Portfolio::on_market_event(const std::shared_ptr<MarketEvent> &event) {
+    unrealized_pnl_ = 0;
+
+    for (const auto &position : opened_positions_) {
+        unrealized_pnl_ +=
+            PnLCalculator::get_position_unrealized_pnl(*position, event->get_data().get_close());
     }
 }
 
@@ -76,6 +85,14 @@ double Portfolio::get_realized_pnl() const {
     return realized_pnl_;
 }
 
+double Portfolio::get_unrealized_pnl() const {
+    return unrealized_pnl_;
+}
+
 double Portfolio::get_account_balance() const {
     return account_balance_;
+}
+
+double Portfolio::get_total_equity() const {
+    return account_balance_ + unrealized_pnl_;
 }
