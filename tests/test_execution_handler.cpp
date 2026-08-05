@@ -9,16 +9,22 @@
 #include "backtester/portfolio/Portfolio.hpp"
 #include "test_utils.hpp"
 #include <gtest/gtest.h>
+#include <memory>
 
-ExecutionConfig conf(0.1, 0.05);
+const int INITIAL_PORTFOLIO_MONEY = 10000;
+
+const ExecutionConfig EXECUTION_CONFIG(0.1, 0.05);
+
+const PortfolioConfig PORTFOLIO_CONFIG(1, INITIAL_PORTFOLIO_MONEY);
+
+const MarketData INITIAL_MARKET_DATA(GLOBAL_EURUSD_INSTRUMENT, {1.172, 1.175, 1.169, 1.170}, 0);
 
 TEST(ExecutionHandler, ValidOrdersCreationAndFloatingRiskCalculation) {
     EventQueue event_queue;
-    PortfolioConfig portfolio_config(1, 10000);
-    Portfolio portfolio(portfolio_config);
-    MarketData initial_market_data(GLOBAL_EURUSD_INSTRUMENT, {1.172, 1.175, 1.169, 1.170}, 0);
+    Portfolio portfolio(PORTFOLIO_CONFIG);
 
-    ExecutionHandler execution_handler(conf, event_queue, portfolio, initial_market_data);
+    ExecutionHandler execution_handler(EXECUTION_CONFIG, event_queue, portfolio,
+                                       INITIAL_MARKET_DATA);
 
     auto event = std::make_shared<OrderEvent>(std::make_shared<Order>(
         Order::make_market(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.169, 1.180)));
@@ -44,11 +50,10 @@ TEST(ExecutionHandler, ValidOrdersCreationAndFloatingRiskCalculation) {
 
 TEST(ExecutionHandler, InvalidOrdersCreation) {
     EventQueue event_queue;
-    PortfolioConfig portfolio_config(1, 10000);
-    Portfolio portfolio(portfolio_config);
-    MarketData initial_market_data(GLOBAL_EURUSD_INSTRUMENT, {1.172, 1.175, 1.169, 1.170}, 0);
+    Portfolio portfolio(PORTFOLIO_CONFIG);
 
-    ExecutionHandler execution_handler(conf, event_queue, portfolio, initial_market_data);
+    ExecutionHandler execution_handler(EXECUTION_CONFIG, event_queue, portfolio,
+                                       INITIAL_MARKET_DATA);
 
     execution_handler.on_order_event(std::make_shared<OrderEvent>(std::make_shared<Order>(
         Order::make_limit(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1, 1.171, 1.168, 1.180))));
@@ -63,11 +68,10 @@ TEST(ExecutionHandler, InvalidOrdersCreation) {
 
 TEST(ExecutionHandler, ExecuteOrder) {
     EventQueue event_queue;
-    PortfolioConfig portfolio_config(1, 10000);
-    Portfolio portfolio(portfolio_config);
-    MarketData initial_market_data(GLOBAL_EURUSD_INSTRUMENT, {1.172, 1.175, 1.169, 1.170}, 0);
+    Portfolio portfolio(PORTFOLIO_CONFIG);
 
-    ExecutionHandler execution_handler(conf, event_queue, portfolio, initial_market_data);
+    ExecutionHandler execution_handler(EXECUTION_CONFIG, event_queue, portfolio,
+                                       INITIAL_MARKET_DATA);
 
     auto order = std::make_shared<Order>(
         Order::make_market(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 0.1, 1.169, 1.180));
