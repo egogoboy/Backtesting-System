@@ -152,6 +152,7 @@ void ExecutionHandler::fill_position(Order &order, double target_price) {
         position->set_take_profit_order(tp_order);
 
         portfolio_.get().reserve_margin(margin);
+        update_maintenance_margin(margin);
 
         positions_.emplace_back(position);
 
@@ -172,6 +173,7 @@ void ExecutionHandler::fill_position(Order &order, double target_price) {
                                       }));
 
         portfolio_.get().release_margin(margin);
+        update_maintenance_margin(-margin);
 
         event_queue_.get().push(std::make_shared<FillEvent>(position, FillAction::CLOSE));
     }
@@ -223,4 +225,8 @@ double ExecutionHandler::calculate_true_range(const MarketData &market_data) {
 
     return std::max(std::max(current_high - current_low, std::abs(current_high - previous_close)),
                     std::abs(current_low - previous_close));
+}
+
+void ExecutionHandler::update_maintenance_margin(double margin) {
+    maintenance_margin_ += margin * config_.maintenance_margin_rate;
 }

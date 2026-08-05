@@ -37,9 +37,12 @@ class ExecutionHandler {
 
     double calculate_true_range(const MarketData &market_data);
 
+    void update_maintenance_margin(double margin);
     ExecutionConfig config_;
 
     double floating_risk_ = 0;
+
+    double maintenance_margin_ = 0;
 
     double atr_ = 0;
     uint32_t number_of_periods_ = 0;
