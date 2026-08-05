@@ -20,25 +20,21 @@ void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event
 
     update_atr(market_data);
 
-    std::vector<std::shared_ptr<Order>> orders_to_execute;
+    last_market_data_ = market_data;
+
+    if (portfolio_.get().get_total_equity() < maintenance_margin_) {
+        execute_stop_out_liquidation();
+    }
 
     std::erase_if(orders_, [&](const auto &order_ptr) {
-        if (!order_ptr) {
-            return true;
-        }
-
         if (order_ptr->get_status() == OrderStatus::PENDING) {
-            if (can_execute_order(*order_ptr, market_data)) {
-                orders_to_execute.emplace_back(order_ptr);
-                return true;
-            }
-            return false;
+            return handle_order_execution(order_ptr);
         }
 
         return true;
     });
 
-    for (auto &order_ptr : orders_to_execute) {
+    for (auto &order_ptr : orders_to_execute_) {
         execute_order(*order_ptr);
     }
 }
@@ -73,6 +69,21 @@ double ExecutionHandler::get_floating_risk() const {
     return floating_risk_;
 }
 
+bool ExecutionHandler::handle_order_execution(const std::shared_ptr<Order> &order) {
+    if (!can_execute_order(*order, last_market_data_)) {
+        return false;
+    }
+
+    if (order->is_exit_order() ||
+        portfolio_.get().has_available_funds(calculate_order_required_margin(*order))) {
+        orders_to_execute_.emplace_back(order);
+        return true;
+    }
+
+    order->cancel();
+    return true;
+}
+
 void ExecutionHandler::execute_order(Order &order) {
     double slippage = calculate_spread();
 
@@ -101,12 +112,6 @@ void ExecutionHandler::execute_order(Order &order) {
 bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &market_data) {
     Direction direction = order.get_direction();
 
-    if (!portfolio_.get().has_available_funds(order.get_volume() *
-                                              order.get_instrument().get_contract_size() *
-                                              config_.margin_rate)) {
-        return false;
-    }
-
     switch (order.get_type()) {
     case OrderType::MARKET:
         return true;
@@ -125,6 +130,26 @@ bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &m
     }
 
     return false;
+}
+
+void ExecutionHandler::execute_stop_out_liquidation() {
+    for (const auto &position : positions_) {
+        position->close_position(last_market_data_.get().get_close());
+
+        double margin = position->get_quantity() * position->get_instrument().get_contract_size() *
+                        config_.margin_rate;
+        portfolio_.get().release_margin(margin);
+
+        event_queue_.get().push(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+
+    positions_.clear();
+
+    for (const auto &order : orders_) {
+        order->cancel();
+    }
+
+    orders_.clear();
 }
 
 void ExecutionHandler::fill_position(Order &order, double target_price) {

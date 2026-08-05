@@ -23,9 +23,13 @@ class ExecutionHandler {
     double get_floating_risk() const;
 
   private:
+    bool handle_order_execution(const std::shared_ptr<Order> &order);
+
     void execute_order(Order &order);
 
-    bool can_execute_order(const Order &order, const MarketData &market_data);
+    static bool can_execute_order(const Order &order, const MarketData &market_data);
+
+    void execute_stop_out_liquidation();
 
     void fill_position(Order &order, double target_price);
 
@@ -59,6 +63,7 @@ class ExecutionHandler {
     std::uniform_real_distribution<double> spread_dist_{MINIMAL_SPREAD, MAXIMUM_SPREAD};
 
     std::vector<std::shared_ptr<Order>> orders_;
+    std::vector<std::shared_ptr<Order>> orders_to_execute_;
     std::vector<std::shared_ptr<Position>> positions_;
 
     std::reference_wrapper<EventQueue> event_queue_;
