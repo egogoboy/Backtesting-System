@@ -98,3 +98,52 @@ TEST(ExecutionHandler, ExecuteOrder) {
 
     EXPECT_TRUE(portfolio.has_available_funds(10000));
 }
+
+TEST(ExecutionHandler, StopOut) {
+    EventQueue event_queue;
+    Portfolio portfolio(PORTFOLIO_CONFIG);
+
+    ExecutionHandler execution_handler(EXECUTION_CONFIG, event_queue, portfolio,
+                                       INITIAL_MARKET_DATA);
+
+    auto first_order = std::make_shared<Order>(
+        Order::make_market(GLOBAL_EURUSD_INSTRUMENT, Direction::LONG, 1.0, 0.7, 1.180));
+
+    execution_handler.on_order_event(std::make_shared<OrderEvent>(first_order));
+
+    auto market_event = std::make_shared<MarketEvent>(
+        MarketData(GLOBAL_EURUSD_INSTRUMENT, {1.170, 1.171, 1.155, 1.156}, 1));
+
+    portfolio.on_market_event(market_event);
+    execution_handler.on_market_event(market_event);
+
+    portfolio.on_fill_event(std::dynamic_pointer_cast<FillEvent>(event_queue.front()));
+    event_queue.pop();
+
+    market_event = std::make_shared<MarketEvent>(
+        MarketData(GLOBAL_EURUSD_INSTRUMENT, {1.156, 1.158, 1.130, 1.132}, 2));
+
+    portfolio.on_market_event(market_event);
+    execution_handler.on_market_event(market_event);
+
+    market_event = std::make_shared<MarketEvent>(
+        MarketData(GLOBAL_EURUSD_INSTRUMENT, {1.129, 1.131, 1.100, 1.102}, 3));
+
+    portfolio.on_market_event(market_event);
+    execution_handler.on_market_event(market_event);
+
+    market_event = std::make_shared<MarketEvent>(
+        MarketData(GLOBAL_EURUSD_INSTRUMENT, {1.102, 1.105, 1.050, 1.055}, 4));
+
+    portfolio.on_market_event(market_event);
+    execution_handler.on_market_event(market_event);
+
+    // Execution Handler has to send close fill event after stop out
+    EXPECT_FALSE(event_queue.empty());
+
+    EXPECT_EQ(event_queue.front()->get_type(), EventType::FILL);
+
+    auto event = std::dynamic_pointer_cast<FillEvent>(event_queue.front());
+
+    EXPECT_EQ(event->get_action(), FillAction::CLOSE);
+}
