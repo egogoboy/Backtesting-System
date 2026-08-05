@@ -66,7 +66,7 @@ bool Portfolio::release_margin(double amount) {
 }
 
 bool Portfolio::has_available_funds(double amount) const {
-    return amount <= account_balance_ - reserved_funds_;
+    return amount <= account_balance_ + unrealized_pnl_ - reserved_funds_;
 }
 
 double Portfolio::get_floating_losses(double current_price) const {
