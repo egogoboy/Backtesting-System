@@ -230,3 +230,7 @@ double ExecutionHandler::calculate_true_range(const MarketData &market_data) {
 void ExecutionHandler::update_maintenance_margin(double margin) {
     maintenance_margin_ += margin * config_.maintenance_margin_rate;
 }
+
+double ExecutionHandler::calculate_order_required_margin(const Order &order) const {
+    return order.get_volume() * order.get_instrument().get_contract_size() * config_.margin_rate;
+}

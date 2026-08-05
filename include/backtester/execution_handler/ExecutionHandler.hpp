@@ -38,6 +38,9 @@ class ExecutionHandler {
     double calculate_true_range(const MarketData &market_data);
 
     void update_maintenance_margin(double margin);
+
+    double calculate_order_required_margin(const Order &order) const;
+
     ExecutionConfig config_;
 
     double floating_risk_ = 0;
