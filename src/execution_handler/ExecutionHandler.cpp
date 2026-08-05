@@ -37,6 +37,8 @@ void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event
     for (auto &order_ptr : orders_to_execute_) {
         execute_order(*order_ptr);
     }
+
+    orders_to_execute_.clear();
 }
 
 void ExecutionHandler::on_order_event(const std::shared_ptr<OrderEvent> &event) {
