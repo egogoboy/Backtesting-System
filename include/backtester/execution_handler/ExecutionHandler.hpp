@@ -68,5 +68,5 @@ class ExecutionHandler {
 
     std::reference_wrapper<EventQueue> event_queue_;
     std::reference_wrapper<Portfolio> portfolio_;
-    std::reference_wrapper<const MarketData> last_market_data_;
+    MarketData last_market_data_;
 };

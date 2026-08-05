@@ -44,7 +44,7 @@ void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event
 void ExecutionHandler::on_order_event(const std::shared_ptr<OrderEvent> &event) {
     auto order = event->get_data();
 
-    double current_price = last_market_data_.get().get_close();
+    double current_price = last_market_data_.get_close();
     Direction direction = order->get_direction();
 
     if (order->get_type() == OrderType::LIMIT) {
@@ -100,7 +100,7 @@ void ExecutionHandler::execute_order(Order &order) {
 
     double entry_price = 0;
     if (order.get_type() == OrderType::MARKET) {
-        entry_price = last_market_data_.get().get_close() + slippage;
+        entry_price = last_market_data_.get_close() + slippage;
     } else {
         entry_price = order.get_trigger_price().value();
     }
@@ -137,7 +137,7 @@ bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &m
 
 void ExecutionHandler::execute_stop_out_liquidation() {
     for (const auto &position : positions_) {
-        position->close_position(last_market_data_.get().get_close());
+        position->close_position(last_market_data_.get_close());
 
         double margin = position->get_quantity() * position->get_instrument().get_contract_size() *
                         config_.margin_rate;
@@ -216,7 +216,7 @@ void ExecutionHandler::update_floating_risk(const Order &order) {
 
     double trigger_price = 0.0;
     if (order.get_type() == OrderType::MARKET) {
-        trigger_price = last_market_data_.get().get_close();
+        trigger_price = last_market_data_.get_close();
     } else {
         trigger_price = order.get_trigger_price().value();
     }
@@ -252,7 +252,7 @@ void ExecutionHandler::update_atr(const MarketData &market_data) {
 double ExecutionHandler::calculate_true_range(const MarketData &market_data) {
     double current_high = market_data.get_high();
     double current_low = market_data.get_low();
-    double previous_close = last_market_data_.get().get_close();
+    double previous_close = last_market_data_.get_close();
 
     return std::max(std::max(current_high - current_low, std::abs(current_high - previous_close)),
                     std::abs(current_low - previous_close));
