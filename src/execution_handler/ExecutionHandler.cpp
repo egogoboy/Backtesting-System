@@ -83,6 +83,7 @@ bool ExecutionHandler::handle_order_execution(const std::shared_ptr<Order> &orde
     }
 
     order->cancel();
+    update_floating_risk(*order);
     return true;
 }
 
@@ -142,6 +143,8 @@ void ExecutionHandler::execute_stop_out_liquidation() {
                         config_.margin_rate;
         portfolio_.get().release_margin(margin);
 
+        update_maintenance_margin(-margin);
+
         event_queue_.get().push(std::make_shared<FillEvent>(position, FillAction::CLOSE));
     }
 
@@ -149,6 +152,7 @@ void ExecutionHandler::execute_stop_out_liquidation() {
 
     for (const auto &order : orders_) {
         order->cancel();
+        update_floating_risk(*order);
     }
 
     orders_.clear();
