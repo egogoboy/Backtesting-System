@@ -12,6 +12,7 @@ target_sources(backtester_core
         portfolio/Portfolio.cpp
         risk_manager/RiskManager.cpp
         execution_handler/ExecutionHandler.cpp
+        metric_calculator/MetricCalculator.cpp
 
         models/Order.cpp
 
