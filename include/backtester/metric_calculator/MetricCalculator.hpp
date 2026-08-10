@@ -15,6 +15,8 @@ class MetricCalculator {
     void on_fill_event(const std::shared_ptr<FillEvent> &event);
 
   private:
+    void update_maximum_drawdown();
+
     std::reference_wrapper<const Portfolio> portfolio_;
 
     double max_drawdown_;
