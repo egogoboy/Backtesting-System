@@ -2,6 +2,7 @@
 
 #include "backtester/events/FillEvent.hpp"
 #include "backtester/events/MarketEvent.hpp"
+#include "backtester/models/Metrics.hpp"
 #include "backtester/models/Position.hpp"
 #include "backtester/portfolio/Portfolio.hpp"
 #include <cstdint>
@@ -15,6 +16,8 @@ class MetricCalculator {
     void on_market_event(const std::shared_ptr<MarketEvent> &event);
 
     void on_fill_event(const std::shared_ptr<FillEvent> &event);
+
+    Metrics calculate_metrics() const;
 
   private:
     void update_total_amount_of_trades();

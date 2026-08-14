@@ -27,6 +27,30 @@ void MetricCalculator::on_fill_event(const std::shared_ptr<FillEvent> &event) {
     }
 }
 
+Metrics MetricCalculator::calculate_metrics() const {
+    Metrics metrics{};
+
+    metrics.win_rate = static_cast<double>(amount_of_winning_trades_) / total_amount_of_trades_;
+
+    metrics.maximum_drawdown = max_drawdown_;
+
+    metrics.profit_factor = gross_profit_ / gross_loss_;
+
+    double win_rate = static_cast<double>(amount_of_winning_trades_) / total_amount_of_trades_;
+
+    double loss_rate = static_cast<double>(amount_of_loss_trades_) / total_amount_of_trades_;
+
+    double average_win = gross_profit_ / amount_of_winning_trades_;
+
+    double average_loss = gross_loss_ / amount_of_loss_trades_;
+
+    metrics.expectancy_money = (win_rate - average_win) / (loss_rate / average_loss);
+
+    metrics.expectancy_r = r_multipliers_sum_ / total_amount_of_trades_;
+
+    return metrics;
+}
+
 void MetricCalculator::update_total_amount_of_trades() {
     ++total_amount_of_trades_;
 }
