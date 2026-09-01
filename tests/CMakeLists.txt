@@ -14,6 +14,8 @@ add_executable(unit_tests
     test_portfolio.cpp
     test_risk_manager.cpp
     test_execution_handler.cpp
+
+    test_metrics.cpp
 )
 
 target_link_libraries(unit_tests
