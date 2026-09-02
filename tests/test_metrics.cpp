@@ -71,9 +71,9 @@ TEST(MetricCalculator, ScenarioOne) {
     metrics = metric_calculator.calculate_metrics();
 
     EXPECT_DOUBLE_EQ(metrics.win_rate, 0.4);
-    EXPECT_LE(metrics.expectancy_money - 1.00404, 10e5);
-    EXPECT_LE(metrics.expectancy_r - 1000, 10e5);
-    EXPECT_LE(metrics.profit_factor - 0.66666, 10e5);
+    EXPECT_LE(metrics.expectancy_money - 1.00404, 10e-5);
+    EXPECT_LE(metrics.expectancy_r - 1000, 10e-5);
+    EXPECT_LE(metrics.profit_factor - 0.66666, 10e-5);
 }
 
 TEST(MetricCalculator, NoTrades) {
