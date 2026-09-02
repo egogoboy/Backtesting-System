@@ -34,7 +34,7 @@ Metrics MetricCalculator::calculate_metrics() const {
 
     metrics.maximum_drawdown = max_drawdown_;
 
-    metrics.profit_factor = gross_profit_ / gross_loss_;
+    metrics.profit_factor = gross_profit_ / std::abs(gross_loss_);
 
     double win_rate = static_cast<double>(amount_of_winning_trades_) / total_amount_of_trades_;
 
