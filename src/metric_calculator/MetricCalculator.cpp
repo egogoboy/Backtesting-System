@@ -5,7 +5,6 @@
 #include "backtester/utils/PnLCalculator.hpp"
 #include <algorithm>
 #include <cstdlib>
-#include <iostream>
 
 MetricCalculator::MetricCalculator(const Portfolio &portfolio)
     : portfolio_{portfolio}, max_drawdown_{portfolio.get_total_equity()} {}

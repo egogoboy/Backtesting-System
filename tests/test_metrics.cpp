@@ -2,6 +2,7 @@
 #include "backtester/enums/Direction.hpp"
 #include "backtester/metric_calculator/MetricCalculator.hpp"
 #include "backtester/models/MarketData.hpp"
+#include "backtester/models/Metrics.hpp"
 #include "backtester/models/Order.hpp"
 #include "backtester/portfolio/Portfolio.hpp"
 #include "test_utils.hpp"
@@ -49,7 +50,11 @@ TEST(MetricCalculator, WinRate) {
         metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
     }
 
-    EXPECT_DOUBLE_EQ(metric_calculator.calculate_metrics().win_rate, 0.66666666666666666);
+    Metrics metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.66666666666666666);
+    EXPECT_LE(metrics.expectancy_money - 0.99328, 10e5);
+    EXPECT_LE(metrics.expectancy_r - 333.33333, 10e5);
 
     for (int i = 0; i < 2; ++i) {
         position =
@@ -62,5 +67,9 @@ TEST(MetricCalculator, WinRate) {
         metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
     }
 
-    EXPECT_DOUBLE_EQ(metric_calculator.calculate_metrics().win_rate, 0.4);
+    metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.4);
+    EXPECT_LE(metrics.expectancy_money - 1.00404, 10e5);
+    EXPECT_LE(metrics.expectancy_r - 1000, 10e5);
 }
