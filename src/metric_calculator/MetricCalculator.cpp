@@ -30,9 +30,13 @@ void MetricCalculator::on_fill_event(const std::shared_ptr<FillEvent> &event) {
 Metrics MetricCalculator::calculate_metrics() const {
     Metrics metrics{};
 
-    metrics.win_rate = static_cast<double>(amount_of_winning_trades_) / total_amount_of_trades_;
-
     metrics.maximum_drawdown = max_drawdown_;
+
+    if (total_amount_of_trades_ == 0) {
+        return metrics;
+    }
+
+    metrics.win_rate = static_cast<double>(amount_of_winning_trades_) / total_amount_of_trades_;
 
     metrics.profit_factor = gross_profit_ / std::abs(gross_loss_);
 
