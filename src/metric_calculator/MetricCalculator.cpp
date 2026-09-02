@@ -5,6 +5,7 @@
 #include "backtester/utils/PnLCalculator.hpp"
 #include <algorithm>
 #include <cstdlib>
+#include <iostream>
 
 MetricCalculator::MetricCalculator(const Portfolio &portfolio)
     : portfolio_{portfolio}, max_drawdown_{portfolio.get_total_equity()} {}
@@ -44,7 +45,7 @@ Metrics MetricCalculator::calculate_metrics() const {
 
     double average_loss = gross_loss_ / amount_of_loss_trades_;
 
-    metrics.expectancy_money = (win_rate - average_win) / (loss_rate / average_loss);
+    metrics.expectancy_money = (win_rate - average_win) / (loss_rate - average_loss);
 
     metrics.expectancy_r = r_multipliers_sum_ / total_amount_of_trades_;
 
