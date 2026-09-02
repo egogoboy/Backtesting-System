@@ -75,3 +75,16 @@ TEST(MetricCalculator, ScenarioOne) {
     EXPECT_LE(metrics.expectancy_r - 1000, 10e5);
     EXPECT_LE(metrics.profit_factor - 0.66666, 10e5);
 }
+
+TEST(MetricCalculator, NoTrades) {
+    Portfolio portfolio(PORTFOLIO_CONFIG);
+
+    MetricCalculator metric_calculator(portfolio);
+
+    Metrics metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0);
+    EXPECT_DOUBLE_EQ(metrics.expectancy_money, 0);
+    EXPECT_DOUBLE_EQ(metrics.expectancy_r, 0);
+    EXPECT_DOUBLE_EQ(metrics.profit_factor, 0);
+}
