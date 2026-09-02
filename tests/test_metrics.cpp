@@ -71,9 +71,114 @@ TEST(MetricCalculator, ScenarioOne) {
     metrics = metric_calculator.calculate_metrics();
 
     EXPECT_DOUBLE_EQ(metrics.win_rate, 0.4);
-    EXPECT_LE(metrics.expectancy_money - 1.00404, 10e-5);
-    EXPECT_LE(metrics.expectancy_r - 1000, 10e-5);
-    EXPECT_LE(metrics.profit_factor - 0.66666, 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 1.00404), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r + 0.1), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 0.66666), 10e-5);
+}
+
+TEST(MetricCalculator, ScenarioTwo) {
+    Portfolio portfolio(PORTFOLIO_CONFIG);
+
+    MetricCalculator metric_calculator(portfolio);
+
+    std::shared_ptr<Position> position =
+        std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 0.1, Direction::LONG, 1.170);
+    std::shared_ptr<Order> order = std::make_shared<Order>(Order::make_stop_loss(position, 1.160));
+    position->set_stop_loss_order(order);
+    metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::OPEN));
+
+    position->close_position(1.165);
+    metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+
+    for (int i = 0; i < 2; ++i) {
+        position =
+            std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 0.1, Direction::LONG, 1.170);
+        order = std::make_shared<Order>(Order::make_stop_loss(position, 1.160));
+        position->set_stop_loss_order(order);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::OPEN));
+
+        position->close_position(1.195);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+
+    Metrics metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.66666666666666666);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 5.02013), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r - 1.5), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 10), 10e-5);
+
+    for (int i = 0; i < 2; ++i) {
+        position =
+            std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 0.1, Direction::LONG, 1.170);
+        order = std::make_shared<Order>(Order::make_stop_loss(position, 1.160));
+        position->set_stop_loss_order(order);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::OPEN));
+
+        position->close_position(1.165);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+
+    metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.4);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 5.05263), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r - 0.7), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 3.33333), 10e-5);
+
+    for (int i = 0; i < 5; ++i) {
+        position =
+            std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 0.1, Direction::LONG, 1.170);
+        order = std::make_shared<Order>(Order::make_stop_loss(position, 1.160));
+        position->set_stop_loss_order(order);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::OPEN));
+
+        position->close_position(1.172);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+
+    metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.7);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 1.71054), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r - 0.45), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 4), 10e-5);
+
+    for (int i = 0; i < 5; ++i) {
+        position =
+            std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 0.1, Direction::LONG, 1.170);
+        order = std::make_shared<Order>(Order::make_stop_loss(position, 1.160));
+        position->set_stop_loss_order(order);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::OPEN));
+
+        position->close_position(1.192);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+
+    metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.8);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 2.82867), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r - 1.03333), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 11.33333), 10e-5);
+
+    for (int i = 0; i < 10; ++i) {
+        position =
+            std::make_shared<Position>(GLOBAL_EURUSD_INSTRUMENT, 0.1, Direction::LONG, 1.170);
+        order = std::make_shared<Order>(Order::make_stop_loss(position, 1.160));
+        position->set_stop_loss_order(order);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::OPEN));
+
+        position->close_position(1.150);
+        metric_calculator.on_fill_event(std::make_shared<FillEvent>(position, FillAction::CLOSE));
+    }
+
+    metrics = metric_calculator.calculate_metrics();
+
+    EXPECT_DOUBLE_EQ(metrics.win_rate, 0.48);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 0.85638), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r + 0.18), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 0.7907), 10e-5);
 }
 
 TEST(MetricCalculator, NoTrades) {
