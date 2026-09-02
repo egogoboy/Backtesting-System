@@ -1,4 +1,5 @@
 #include "backtester/metric_calculator/MetricCalculator.hpp"
+#include "backtester/enums/Direction.hpp"
 #include "backtester/enums/FillAction.hpp"
 #include "backtester/models/Order.hpp"
 #include "backtester/portfolio/Portfolio.hpp"
@@ -80,9 +81,13 @@ void MetricCalculator::update_r_multipliers_sum(const Position &position) {
 }
 
 double MetricCalculator::calculate_r_multiplier(const Position &position) {
-    double position_pnl = PnLCalculator::get_position_realized_pnl(position);
     double entry_price = position.get_entry_price();
     double stop_loss = position.get_stop_loss_order().lock()->get_trigger_price().value();
+    double price_change = position.get_exit_price().value() - entry_price;
 
-    return position_pnl / std::abs(entry_price - stop_loss);
+    if (position.get_direction() == Direction::SHORT) {
+        price_change *= -1;
+    }
+
+    return price_change / (entry_price - stop_loss);
 }

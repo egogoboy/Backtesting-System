@@ -53,9 +53,9 @@ TEST(MetricCalculator, ScenarioOne) {
     Metrics metrics = metric_calculator.calculate_metrics();
 
     EXPECT_DOUBLE_EQ(metrics.win_rate, 0.66666666666666666);
-    EXPECT_LE(metrics.expectancy_money - 0.99328, 10e-5);
-    EXPECT_LE(metrics.expectancy_r - 10000, 10e-5);
-    EXPECT_LE(metrics.profit_factor - 2, 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_money - 0.99328), 10e-5);
+    EXPECT_LE(std::abs(metrics.expectancy_r - 0.16667), 10e-5);
+    EXPECT_LE(std::abs(metrics.profit_factor - 2), 10e-5);
 
     for (int i = 0; i < 2; ++i) {
         position =
