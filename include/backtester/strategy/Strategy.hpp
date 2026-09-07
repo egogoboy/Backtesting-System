@@ -21,15 +21,18 @@ class Strategy {
 
   protected:
     void send_signal(const Signal &signal) {
+        if (event_queue_ == nullptr) {
+            return;
+        }
         event_queue_->push(std::make_shared<SignalEvent>(signal));
     }
 
   private:
     friend Engine;
 
-    void set_event_queue(const EventQueue &queue) {
-        event_queue_ = std::make_shared<EventQueue>(queue);
+    void set_event_queue(EventQueue &queue) {
+        event_queue_ = &queue;
     }
 
-    std::shared_ptr<EventQueue> event_queue_;
+    EventQueue *event_queue_ = nullptr;
 };
