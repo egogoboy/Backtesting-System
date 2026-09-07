@@ -22,6 +22,10 @@ class DataFeed {
         return *current_++;
     }
 
+    MarketData get_current_market_data() {
+        return *current_;
+    }
+
   private:
     std::vector<MarketData>::iterator current_;
     std::vector<MarketData> data_;
