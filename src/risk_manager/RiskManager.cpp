@@ -104,7 +104,7 @@ bool RiskManager::check_total_accout_risk(double safe_capital) const {
 // Add Execution Handler pending orders risk to the formula
 double RiskManager::calculate_safe_capital() const {
     return portfolio_.get().get_account_balance() -
-           portfolio_.get().get_floating_losses(last_market_data_.get().get_close());
+           portfolio_.get().get_floating_losses(last_market_data_.get_close());
 }
 
 double RiskManager::calculate_position_size(const Signal &signal, double safe_capital) const {
@@ -119,5 +119,5 @@ double RiskManager::get_signal_entry_price(const Signal &signal) const {
         return signal.get_entry_price().value();
     }
 
-    return last_market_data_.get().get_close();
+    return last_market_data_.get_close();
 }
