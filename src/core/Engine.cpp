@@ -6,6 +6,12 @@
 Metrics Engine::run() {
     while (data_feed_.get().has_next()) {
         event_queue_.push(std::make_shared<MarketEvent>(data_feed_.get().get_next_market_event()));
+
+        while (!next_step_event_queue_.empty()) {
+            event_queue_.push(next_step_event_queue_.front());
+            next_step_event_queue_.pop();
+        }
+
         while (!event_queue_.empty()) {
             std::shared_ptr<Event> event = event_queue_.front();
             event_queue_.pop();
