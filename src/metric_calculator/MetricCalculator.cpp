@@ -17,6 +17,7 @@ void MetricCalculator::on_market_event(const std::shared_ptr<MarketEvent> &event
 void MetricCalculator::on_fill_event(const std::shared_ptr<FillEvent> &event) {
     if (event->get_action() == FillAction::OPEN) {
         update_total_amount_of_trades();
+        ++amount_of_executed_orders_;
     }
 
     if (event->get_action() == FillAction::CLOSE) {
@@ -28,10 +29,24 @@ void MetricCalculator::on_fill_event(const std::shared_ptr<FillEvent> &event) {
     }
 }
 
+void MetricCalculator::on_signal_event(const std::shared_ptr<SignalEvent> &event) {
+    ++amount_of_signals_;
+}
+
+void MetricCalculator::on_order_event(const std::shared_ptr<OrderEvent> &event) {
+    if (event->get_data()->is_entry_order()) {
+        ++amount_of_orders_;
+    }
+}
+
 Metrics MetricCalculator::calculate_metrics() const {
     Metrics metrics{};
 
     metrics.maximum_drawdown = max_drawdown_;
+
+    metrics.amount_of_orders = amount_of_orders_;
+    metrics.amount_of_signals = amount_of_signals_;
+    metrics.amount_of_executed_orders = amount_of_executed_orders_;
 
     if (total_amount_of_trades_ == 0) {
         return metrics;

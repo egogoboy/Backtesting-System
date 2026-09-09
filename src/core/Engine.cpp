@@ -20,10 +20,12 @@ Metrics Engine::run() {
 
             case EventType::SIGNAL:
                 risk_manager_.on_signal_event(std::static_pointer_cast<SignalEvent>(event));
+                metric_calculator_.on_signal_event(std::static_pointer_cast<SignalEvent>(event));
                 break;
 
             case EventType::ORDER:
                 execution_handler_.on_order_event(std::static_pointer_cast<OrderEvent>(event));
+                metric_calculator_.on_order_event(std::static_pointer_cast<OrderEvent>(event));
                 break;
 
             case EventType::FILL:

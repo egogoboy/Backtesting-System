@@ -2,6 +2,8 @@
 
 #include "backtester/events/FillEvent.hpp"
 #include "backtester/events/MarketEvent.hpp"
+#include "backtester/events/OrderEvent.hpp"
+#include "backtester/events/SignalEvent.hpp"
 #include "backtester/models/Metrics.hpp"
 #include "backtester/models/Position.hpp"
 #include "backtester/portfolio/Portfolio.hpp"
@@ -16,6 +18,10 @@ class MetricCalculator {
     void on_market_event(const std::shared_ptr<MarketEvent> &event);
 
     void on_fill_event(const std::shared_ptr<FillEvent> &event);
+
+    void on_signal_event(const std::shared_ptr<SignalEvent> &event);
+
+    void on_order_event(const std::shared_ptr<OrderEvent> &event);
 
     Metrics calculate_metrics() const;
 
@@ -45,4 +51,10 @@ class MetricCalculator {
     double gross_loss_ = 0;
 
     double r_multipliers_sum_ = 0;
+
+    int amount_of_orders_ = 0;
+
+    int amount_of_signals_ = 0;
+
+    int amount_of_executed_orders_ = 0;
 };
