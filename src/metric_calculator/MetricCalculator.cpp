@@ -27,6 +27,8 @@ void MetricCalculator::on_fill_event(const std::shared_ptr<FillEvent> &event) {
 
         update_r_multipliers_sum(position);
     }
+
+    update_maximum_drawdown();
 }
 
 void MetricCalculator::on_signal_event(const std::shared_ptr<SignalEvent> &event) {
@@ -43,6 +45,10 @@ Metrics MetricCalculator::calculate_metrics() const {
     Metrics metrics{};
 
     metrics.maximum_drawdown = max_drawdown_;
+
+    metrics.account_balance = portfolio_.get().get_account_balance();
+    metrics.realized_pnl = portfolio_.get().get_realized_pnl();
+    metrics.unrealized_pnl = portfolio_.get().get_unrealized_pnl();
 
     metrics.amount_of_orders = amount_of_orders_;
     metrics.amount_of_signals = amount_of_signals_;
