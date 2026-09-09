@@ -5,6 +5,7 @@
 #include "backtester/enums/OrderType.hpp"
 #include "backtester/events/FillEvent.hpp"
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -105,11 +106,15 @@ void ExecutionHandler::execute_order(Order &order) {
         entry_price = order.get_trigger_price().value();
     }
 
-    fill_position(order, entry_price);
+    try {
+        fill_position(order, entry_price);
 
-    order.execute();
+        order.execute();
 
-    update_floating_risk(order);
+        update_floating_risk(order);
+    } catch (const std::logic_error &er) {
+        // Failed to create Order. No actions needed
+    }
 }
 
 bool ExecutionHandler::can_execute_order(const Order &order, const MarketData &market_data) {
