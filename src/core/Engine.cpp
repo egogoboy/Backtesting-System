@@ -20,6 +20,7 @@ Metrics Engine::run() {
             case EventType::MARKET:
                 execution_handler_.on_market_event(std::static_pointer_cast<MarketEvent>(event));
                 risk_manager_.on_market_event(std::static_pointer_cast<MarketEvent>(event));
+                portfolio_.on_market_event(std::static_pointer_cast<MarketEvent>(event));
                 metric_calculator_.on_market_event(std::static_pointer_cast<MarketEvent>(event));
                 strategy_->on_market(*std::static_pointer_cast<MarketEvent>(event));
                 break;
