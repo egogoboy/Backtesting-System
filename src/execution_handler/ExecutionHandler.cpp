@@ -5,7 +5,6 @@
 #include "backtester/enums/OrderType.hpp"
 #include "backtester/events/FillEvent.hpp"
 #include <algorithm>
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -89,6 +88,10 @@ bool ExecutionHandler::handle_order_execution(const std::shared_ptr<Order> &orde
 }
 
 void ExecutionHandler::execute_order(Order &order) {
+    if (order.get_status() == OrderStatus::CANCELED) {
+        return;
+    }
+
     double slippage = calculate_spread();
 
     if (order.get_type() == OrderType::STOP) {
