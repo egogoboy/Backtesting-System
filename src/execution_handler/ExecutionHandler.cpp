@@ -26,6 +26,7 @@ void ExecutionHandler::on_market_event(const std::shared_ptr<MarketEvent> &event
 
     if (portfolio_.get().get_total_equity() < maintenance_margin_) {
         execute_stop_out_liquidation();
+        return;
     }
 
     std::erase_if(orders_, [&](const auto &order_ptr) {
@@ -162,8 +163,6 @@ void ExecutionHandler::execute_stop_out_liquidation() {
         order->cancel();
         update_floating_risk(*order);
     }
-
-    orders_.clear();
 }
 
 void ExecutionHandler::fill_position(Order &order, double target_price) {
