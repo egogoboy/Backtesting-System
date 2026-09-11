@@ -20,9 +20,8 @@ class Engine {
            PortfolioConfig &portfolio_config, RiskManagerConfig &risk_manager_config,
            ExecutionConfig &execution_config)
         : start_time_{std::chrono::system_clock::now()}, strategy_{strategy}, data_feed_(data_feed),
-          portfolio_(portfolio_config),
-          risk_manager_(risk_manager_config, next_step_event_queue_, portfolio_,
-                        data_feed_.get().get_current_market_data()),
+          portfolio_(portfolio_config), risk_manager_(risk_manager_config, event_queue_, portfolio_,
+                                                      data_feed_.get().get_current_market_data()),
           execution_handler_(execution_config, event_queue_, portfolio_,
                              data_feed_.get().get_current_market_data()),
           metric_calculator_(portfolio_) {
