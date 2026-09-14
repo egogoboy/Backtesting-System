@@ -71,3 +71,9 @@ Testing/
 
 # external libraries
 external/*
+
+__pycache__
+
+{{pkgetc}}
+
+.DS_Store
