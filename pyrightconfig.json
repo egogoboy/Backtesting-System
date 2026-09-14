@@ -1,0 +1,9 @@
+{
+    "include": [
+        "tests/python",
+        "python"
+    ],
+    "extraPaths": [
+        "build/python/bindings"
+    ]
+}
