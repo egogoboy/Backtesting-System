@@ -1,6 +1,7 @@
 set(BINDINGS_SOURCES
     bindings.cpp
     configs.cpp
+    models.cpp
 )
 
 pybind11_add_module(_backtester ${BINDINGS_SOURCES})
