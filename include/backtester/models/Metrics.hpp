@@ -12,15 +12,15 @@ struct Metrics {
           amount_of_signals{amount_of_signals},
           amount_of_executed_orders{amount_of_executed_orders} {}
 
-    double account_balance = 0;
-    double realized_pnl = 0;
-    double unrealized_pnl = 0;
-    double win_rate = 0;
-    double maximum_drawdown = 0;
-    double profit_factor = 0;
-    double expectancy_money = 0;
-    double expectancy_r = 0;
-    int amount_of_orders = 0;
-    int amount_of_signals = 0;
-    int amount_of_executed_orders = 0;
+    double account_balance;
+    double realized_pnl;
+    double unrealized_pnl;
+    double win_rate;
+    double maximum_drawdown;
+    double profit_factor;
+    double expectancy_money;
+    double expectancy_r;
+    int amount_of_orders;
+    int amount_of_signals;
+    int amount_of_executed_orders;
 };
