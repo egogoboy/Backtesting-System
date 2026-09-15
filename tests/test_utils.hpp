@@ -10,5 +10,5 @@ inline bool compare_market_data(const MarketData &lhs, const MarketData &rhs) {
            lhs.get_instrument().get_contract_size() == rhs.get_instrument().get_contract_size() &&
            lhs.get_instrument().get_lot_size() == rhs.get_instrument().get_lot_size() &&
            lhs.get_instrument().get_pip_size() == rhs.get_instrument().get_pip_size() &&
-           lhs.get_instrument().get_symbol().get() == rhs.get_instrument().get_symbol().get();
+           lhs.get_instrument().get_symbol() == rhs.get_instrument().get_symbol();
 }

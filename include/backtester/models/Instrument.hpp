@@ -7,7 +7,7 @@ class Instrument {
         : symbol_{symbol}, contract_size_{contract_size}, pip_size_{pip_size}, lot_size_{lot_size} {
     }
 
-    std::reference_wrapper<const std::string> get_symbol() const {
+    const std::string &get_symbol() const {
         return symbol_;
     }
 
@@ -24,7 +24,7 @@ class Instrument {
     }
 
   private:
-    std::reference_wrapper<const std::string> symbol_;
+    std::string symbol_;
     double contract_size_;
     double pip_size_;
     double lot_size_;
