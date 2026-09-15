@@ -1,6 +1,7 @@
 set(BINDINGS_SOURCES
     bindings.cpp
     configs.cpp
+    enums.cpp
     models.cpp
 )
 
