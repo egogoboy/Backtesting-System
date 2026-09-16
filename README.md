@@ -106,13 +106,25 @@ Win rate:          61.54%
 
 ### Requirements
 
-
+- C++20 compiler
+- CMake
+- Python 3.x
 
 ### Build
 
+```bash
+git clone https://github.com/egogoboy/Backtesting-System
+cd Backtesting-System
+cmake -S . -B build
+cmake --build build
+```
+
 ### Run tests
 
-
+```bash
+ctest --test-dir build --output-on-failure
+pytest --rootdir tests/python
+```
 
 ## Project Structure
 
