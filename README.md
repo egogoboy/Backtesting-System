@@ -35,7 +35,82 @@ Event-driven algorithmic trading backtesting engine written in modern C++20 with
 
 ## Example
 
+A minimal example of running a backtest with a custom strategy:
 
+```py
+import backtester
+
+# Configure trading instrument
+instrument = backtester.Instrument('EURUSD', 100000, 0.0001, 100000)
+
+class AlwaysLongStrategy(backtester.Strategy):
+    def on_market(self, event):
+        data = event.data
+        # Generate a long market signal with stop-loss and take-profit.
+        self.send_signal(
+            backtester.Signal.make_market(
+                instrument,
+                backtester.Direction.LONG,
+                data.low() + 0.002,    # Stop-loss
+                data.close() + 0.008,  # Take-profit
+            )
+        )
+
+# Load historical market data.
+data_feed = backtester.DataFeed(
+    'data/EURUSD.csv',
+    instrument,
+)
+
+# Configure the portfolio and account.
+portfolio_config = backtester.PortfolioConfig(
+    account_id=1,
+    account_balance=10000,
+)
+
+# Configure position and account-level risk limits.
+risk_manager_config = backtester.RiskManagerConfig(
+    risk_per_trade=0.01,
+    total_account_risk=0.1,
+    sl_tp_ratio=0.4,
+)
+
+# Configure margin requirements.
+execution_config = backtester.ExecutionConfig(
+    margin_rate=0.05,
+    maintenance_margin_rate=0.05,
+)
+
+# Create the strategy and run the backtest.
+strategy = AlwaysLongStrategy()
+
+engine = backtester.Engine(
+    strategy,
+    data_feed,
+    portfolio_config,
+    risk_manager_config,
+    execution_config,
+)
+
+result = engine.run()
+print("Backtesting Results")
+print("-------------------")
+print(f"Account balance:   {result.account_balance:.2f}")
+print(f"Realized PnL:      {result.realized_pnl:.2f}")
+print(f"Maximum drawdown:  {result.maximum_drawdown:.2%}")
+print(f"Win rate:          {result.win_rate:.2%}")
+```
+
+**Sample output:**
+
+```
+Backtesting Results
+-------------------
+Account balance:   10284.50
+Realized PnL:      284.50
+Maximum drawdown:  3.72%
+Win rate:          61.54%
+```
 
 ---
 
