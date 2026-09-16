@@ -1,5 +1,9 @@
 add_library(backtester_core)
 
+set_target_properties(backtester_core PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)
+
 target_include_directories(backtester_core
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include
