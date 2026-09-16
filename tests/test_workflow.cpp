@@ -2,7 +2,9 @@
 #include "backtester/models/MarketData.hpp"
 #include "backtester/models/Signal.hpp"
 #include "backtester/strategy/Strategy.hpp"
+
 #include "test_utils.hpp"
+#include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <memory>

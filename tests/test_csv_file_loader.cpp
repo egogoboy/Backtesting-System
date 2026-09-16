@@ -2,6 +2,7 @@
 #include "backtester/utils/CSVFileLoader.hpp"
 #include "test_utils.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <stdexcept>
