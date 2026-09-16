@@ -3,6 +3,10 @@ set(BINDINGS_SOURCES
     configs.cpp
     enums.cpp
     models.cpp
+    data_feed.cpp
+    events.cpp
+    strategy.cpp
+    engine.cpp
 )
 
 pybind11_add_module(_backtester ${BINDINGS_SOURCES})
