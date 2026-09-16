@@ -19,19 +19,9 @@ Event-driven algorithmic trading backtesting engine written in modern C++20 with
     <img src="https://github.com/egogoboy/Backtesting-System/blob/main/docs/images/Event%20Flow%20Diagram.svg" width="80%" alt="Event Flow Diagram">
 </p>
 
----
-
-## Event Flow
-
->TODO: Add Event Flow Diagram
-
----
-
 ## Features
 
 
-
----
 
 ## Example
 
@@ -112,11 +102,11 @@ Maximum drawdown:  3.72%
 Win rate:          61.54%
 ```
 
----
-
 ## Installation
 
 ### Requirements
+
+
 
 ### Build
 
@@ -124,14 +114,24 @@ Win rate:          61.54%
 
 
 
-
 ## Project Structure
 
-
-
+```sh
+.
+├── apps/             # Application entry point (executable targets)
+├── CMakeLists.txt    # Main CMake build configuration file
+├── docs/             # Project documentation and guides
+├── include/          # Public header files (.hpp)
+│   └── backtester/   # Library namespace directory
+├── python/           # Python bindings and wrapper source code
+├── README.md         # Project overview and setup instructions
+├── src/              # C++ implementation files (.cpp)
+└── tests/            # Unit and integration tests
+    ├── cpp/          # C++ test suites (GTest)
+    └── python/       # Python test suites (pytest)
+```
 
 ## Limitations
-
 
 
 
@@ -157,7 +157,6 @@ Win rate:          61.54%
 [Website](https://personal-website-theta-ruddy-16.vercel.app)
 
 [Send me an email](mailto:erian.sunavell@gmail.com)
-
 
 ## License
 
