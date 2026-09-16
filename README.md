@@ -11,13 +11,13 @@ Event-driven algorithmic trading backtesting engine written in modern C++20 with
 ![PyTest](https://img.shields.io/badge/PyTest-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
----
-
 ## Overview
 
 ## Architecture
 
->TODO: Add Components Diagram
+<p align="center">
+    <img src="https://github.com/egogoboy/Backtesting-System/blob/main/docs/images/Event%20Flow%20Diagram.svg" width="80%" alt="Event Flow Diagram">
+</p>
 
 ---
 
@@ -124,29 +124,29 @@ Win rate:          61.54%
 
 
 
----
 
 ## Project Structure
 
 
 
----
 
 ## Limitations
 
 
 
----
 
 ## Roadmap
 
-
-
----
+- [ ] Python package
+- [ ] Basic OHLC csv file support
+- [ ] Isolated margin
+- [ ] High/Low check for Stop Out
+- [ ] Performance metrics API
+- [ ] More historical data formats
+- [ ] Strategy optimization
+- [ ] Walk-forward analysis
 
 ## Project Status
-
----
 
 ## Author
 
