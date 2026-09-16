@@ -1,5 +1,7 @@
 #include "backtester/data_feed/DataFeed.hpp"
 #include "test_utils.hpp"
+
+#include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 
