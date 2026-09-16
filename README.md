@@ -205,6 +205,8 @@ The current implementation is intentionally focused on a simplified historical b
 
 ## Project Status
 
+The core event-driven architecture and Python interface are fully implemented for the Minimum Viable Product (MVP) stage. Current development focuses on packaging the framework into a native Python library to facilitate seamless deployment for quantitative research.
+
 ## Author
 
 **Egor Sudakov**
