@@ -17,5 +17,11 @@ jobs:
       - name: Build
         run: cmake --build build --parallel
 
-      - name: Test
+      - name: CTest
         run: ctest --test-dir build --output-on-failure
+
+      - name: Install Python dependencies
+        run: python3 -m pip install pytest
+
+      - name: PyTest
+        run: pytest --rootdir tests/python
